@@ -1,1 +1,39 @@
+import pandas as pd
+#Read in text file
 
+data = pd.read_csv('file', header=None, error_bad_lines=False, sep=',')
+data.head()
+
+data.dtypes
+data.shape
+
+# Create a new field and name the field 'date'.
+data['date'] = data[0]
+
+# Drop the previous date field
+data = data.drop(columns=0)
+
+# Create a new column called 'time' and number 2 by splitting column 1 on the '-' object.
+data[['time', 2]] = data[1].str.split('-', 1, expand=True)
+
+# Drop the previous 1 field
+data = data.drop(columns=1)
+
+# Create a new column called 'name' and 'content' by splitting column 2 on the ':' object.
+data[['name', 'content']] = data[2].str.split(':', 1, expand=True)
+
+# Drop the previous 2 field
+data = data.drop(columns=2)
+
+# Drop the rows where all data is empty ('na')
+data = data.dropna()
+data.head()
+
+# Create a Pandas Excel writer using XlsxWriter as the engine.
+writer = pd.ExcelWriter('name_of_file.xlsx', engine='xlsxwriter')
+
+# Convert the dataframe to an XlsxWriter Excel object.
+data.to_excel(writer, sheet_name='Sheet1')
+
+# Close the Pandas Excel writer and output the Excel file.
+writer.save()
