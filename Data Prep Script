@@ -1,0 +1,53 @@
+# Connect to the drive to read the file
+
+from google.colab import drive
+drive.mount('/content/drive')
+
+### Upload File
+from google.colab import files
+uploaded = files.upload()
+
+### Import Libraries
+import pandas as pd
+import io
+import matplotlib.pyplot as plt
+from matplotlib.patches import Arc
+import matplotlib.patches as patches
+#!pip install cv2
+import cv2
+from google.colab.patches import cv2_imshow as image
+df = pd.read_csv('/content/drive/MyDrive/WhatsApp/WhatsApp Chat with Family Auf der Rathke 🇿🇦.txt', header=None, 
+                 error_bad_lines=False, sep=',')
+
+### ----- DATA PREP -----
+
+# Create a new field and name the field 'Date'.
+df['Date'] = df[0]
+
+# Drop the previous Date field
+df = df.drop(columns=0)
+
+# Create a new column called 'Time' and number 2 by splitting column 1 on the '-' object.
+df[['Time', 2]] = df[1].str.split('-', 1, expand=True)
+
+# Drop the previous 1 field
+df = df.drop(columns=1)
+
+# Create a new column called 'Name' and 'Content' by splitting column 2 on the ':' object.
+df[['Name', 'Content']] = df[2].str.split(':', 1, expand=True)
+
+# Merge columns 3 and Content
+#df['Message'] = df['3'] + ' ' + df['Content']
+
+# Drop the previous 2 field
+df = df.drop(columns=2)
+
+# Drop the rows where all data is empty ('na')
+df = df.dropna()
+
+# Length of file
+len(df)
+
+# Save data source
+#df.to_csv('/content/drive/MyDrive/WhatsApp/Family_WhatsApp_Chat.csv', index=False)
+#df.to_csv('Family_WhatsApp_Chat.csv', index=False)
