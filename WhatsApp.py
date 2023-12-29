@@ -39,9 +39,11 @@ st.write("""
          with one of your contact. Once the message is highlighted, navigate to
          
          the top right and press the **three** button to bring up the next option. Download
-         the chat message as a **text** file (.txt).
+         the chat message as a **text** file (.txt). 
          
-         You can choose to **include media messages or not** before exporting the file.
+         You can choose to **include media messages or not** before exporting the file. 
+         
+         Convert this .txt file into a csv.
          """)
 
 # Upload file to read data
@@ -53,8 +55,9 @@ data_file = st.file_uploader("Upload your text file below...", type=["txt"])
 if data_file is not None:
     file_details = {"filename":data_file.name, "filetype":data_file.type,
                     "filesize":data_file.size}
-
-df = pd.read_csv(data_file, header=None, error_bad_lines=False, sep=',')
+    
+df = pd.read_csv(data_file, header=None, error_bad_lines=False)
+#df = pd.read_csv(data_file, header=None, error_bad_lines=False, sep=',')
 
 ### ----- DATA PREP -----
 
@@ -121,12 +124,3 @@ st.download_button(
    "text/csv",
    key='download-csv'
 )
-
-
-# ----- GENERAL SETTINGS -----
-PAGE_TITLE = "Digital CV | Alex Rathke"
-PAGE_ICON = ":wave:"
-NAME = "Alex Rathke"
-DESCRIPTION = """
-Data Analyst, Business Intelligence Analyst, \nData Visualisation
-"""
