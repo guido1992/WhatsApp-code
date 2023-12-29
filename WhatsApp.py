@@ -10,6 +10,8 @@ Created on Thu Dec 28 09:58:08 2023
 # Import libraries
 import streamlit as st
 import pandas as pd
+from io import StringIO
+import base64
 #from PIL import Image
 
 # Layout of application
@@ -56,36 +58,46 @@ if data_file is not None:
     file_details = {"filename":data_file.name, "filetype":data_file.type,
                     "filesize":data_file.size}
     
-df = pd.read_csv(data_file, header=None, error_bad_lines=False, sep=',')
+#df = pd.read_csv(data_file, header=None, error_bad_lines=False, sep=',')
+    
+# Read contents
+text_content_bytes= data_file.read()
+    
+# Decode the bytes to a string
+text_content_str = text_content_bytes.decode("utf-8")
+    
+# Convert text to CSV
+csv_content = StringIO(text_content_str)
+data = pd.read_csv(csv_content, delimiter='\t')
+   
+# Display original df
+#st.write("Original df:")
+    
+# Add columns to file
+data.columns = ['Content']
 
 ### ----- DATA PREP -----
+    
+# Create a single Date column
+data[['Date', 'Rest']] = data['Content'].str.split(',', 1, expand=True)
 
-# Create a new field and name the field 'Date'
-df['Date'] = df[0]
+# Create a single Time column
+data[['Time', 'Details']] = data['Rest'].str.split('-', 1, expand=True)
 
-# Drop the previous Date field
-df = df.drop(columns=0)
+# Create a user column
+data[['User', 'Contents']] = data['Details'].str.split(':', 1, expand=True)
 
-# Create a new column called 'Time' and number 2 by splitting column 1 on the '-' object.
-df[['Time', 2]] = df[1].str.split('-', 1, expand=True)
-
-# Drop the previous 1 field
-df = df.drop(columns=1)
-
-# Create a new column called 'Name' and 'Content' by splitting column 2 on the ':' object.
-df[['Name', 'Content']] = df[2].str.split(':', 1, expand=True)
-
-# Merge columns 3 and Content
-#df['Message'] = df['3'] + ' ' + df['Content']
-
-# Drop the previous 2 field
-df = df.drop(columns=2)
+# Drop the 'Rest' column
+data = data.drop(columns=['Content', 'Rest', 'Details'])
 
 # Drop the rows where all data is empty ('na')
-df = df.dropna()
+data = data.dropna()
 
 # Rename the file values in the 'Content' column
-df.loc[df['Content'].str.contains('(file attached)'), 'Content'] = 'file'
+data.loc[data['Contents'].str.contains('(file attached)'), 'Contents'] = 'media file'
+      
+# Save the Dataframe a CSV
+df = data.to_csv(index=False)
 
 # Show/Hide button
 #show_df = st.checkbox("Show Dataframe")
@@ -94,32 +106,32 @@ df.loc[df['Content'].str.contains('(file attached)'), 'Content'] = 'file'
 #if show_df:
 #    st.write(df)
 
+#st.write(data)
+    
 # Dataframe header
 st.subheader('Dataframe')
 
 # Paragraph
 st.write("""
-         If media was included in the export, the value shown as **file** was standardised
-         from all random names of the files exported.
+         If media was included in the export, the value shown as **media file** was 
+         standardised from all random names of the files exported.
          """)
 
-# Show df
-st.write(df)
+# Display CSV content
+#st.write("Download CSV:")
+st.write(pd.read_csv(StringIO(df)))
 
 ### ----- DOWNLOAD CSV FILE -----
 
-def convert_df(df):
-   return df.to_csv(index=False).encode('utf-8')
-
-csv = convert_df(df)
-
-# Paragraph
-st.write('**Download CSV file**')
-
+csv = df.to_csv(index=False)
+#csv = df.to_csv(index=False).encode('utf-8')
 st.download_button(
-   "Press to Download",
-   csv,
-   "Clean_WhatsApp_file.csv",
-   "text/csv",
-   key='download-csv'
+    "Press to Download",
+    csv,
+    "Clean_WhatsApp_file.csv",
+    "text/csv",
+    key='download-csv'
 )
+    
+    
+    
