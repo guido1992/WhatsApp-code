@@ -56,7 +56,7 @@ if data_file is not None:
     file_details = {"filename":data_file.name, "filetype":data_file.type,
                     "filesize":data_file.size}
     
-df = pd.read_csv(data_file, header=None, error_bad_lines=False)
+df = pd.read_csv(data_file)
 #df = pd.read_csv(data_file, header=None, error_bad_lines=False, sep=',')
 
 ### ----- DATA PREP -----
