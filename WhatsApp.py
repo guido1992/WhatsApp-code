@@ -57,46 +57,37 @@ if data_file is not None:
     file_details = {"filename":data_file.name, "filetype":data_file.type,
                     "filesize":data_file.size}
     
-#df = pd.read_csv(data_file, header=None, error_bad_lines=False, sep=',')
-    
-# Read contents
-text_content_bytes= data_file.read()
-    
-# Decode the bytes to a string
-text_content_str = text_content_bytes.decode("utf-8")
-    
-# Convert text to CSV
-csv_content = StringIO(text_content_str)
-data = pd.read_csv(csv_content, delimiter='\t')
-   
-# Display original df
-#st.write("Original df:")
-    
-# Add columns to file
-data.columns = ['Content']
+df = pd.read_csv(data_file, header=None, error_bad_lines=False, sep=',')
 
 ### ----- DATA PREP -----
-    
-# Create a single Date column
-data[['Date', 'Rest']] = data['Content'].str.split(',', 1, expand=True)
 
-# Drop the 'Rest' column
-data = data.drop(columns=['Content'])
+# Create a new field and name the field 'Date'
+#df[['Time', 2]] = df[1].str.split('-', 1, expand=True)
+df['Date'] = df[0]
 
-# Create a single Time column
-#data[['Time', 'Details']] = data['Rest'].str.split('-', 1, expand=True)
+# Drop the previous Date field
+df = df.drop(columns=0)
 
-# Create a user column
-#data[['User', 'Contents']] = data['Details'].str.split(':', 1, expand=True)
+# Create a new column called 'Time' and number 2 by splitting column 1 on the '-' object.
+df[['Time', 2]] = df[1].str.split('-', 1, expand=True)
+
+# Drop the previous 1 field
+df = df.drop(columns=1)
+
+# Create a new column called 'Name' and 'Content' by splitting column 2 on the ':' object.
+df[['Name', 'Content']] = df[2].str.split(':', 1, expand=True)
+
+# Merge columns 3 and Content
+#df['Message'] = df['3'] + ' ' + df['Content']
+
+# Drop the previous 2 field
+df = df.drop(columns=2)
 
 # Drop the rows where all data is empty ('na')
-#data = data.dropna()
+df = df.dropna()
 
 # Rename the file values in the 'Content' column
-#data.loc[data['Contents'].str.contains('(file attached)'), 'Contents'] = 'media file'
-      
-# Save the Dataframe a CSV
-df = data.to_csv(index=False)
+df.loc[df['Content'].str.contains('(file attached)'), 'Content'] = 'media file'
 
 # Show/Hide button
 #show_df = st.checkbox("Show Dataframe")
@@ -105,8 +96,6 @@ df = data.to_csv(index=False)
 #if show_df:
 #    st.write(df)
 
-#st.write(data)
-    
 # Dataframe header
 st.subheader('Dataframe')
 
@@ -116,20 +105,77 @@ st.write("""
          standardised from all random names of the files exported.
          """)
 
+
+
+
+
+
+
+
+
+
+   
+# Read contents
+#text_content_bytes= data_file.read()
+    
+# Decode the bytes to a string
+#text_content_str = text_content_bytes.decode("utf-8")
+    
+# Convert text to CSV
+#csv_content = StringIO(text_content_str)
+#data = pd.read_csv(csv_content, delimiter='\t')
+   
+# Display original df
+#st.write("Original df:")
+    
+# Add columns to file
+#data.columns = ['Content']
+
+### ----- DATA PREP -----
+    
+# Create a single Time column
+#data[['Time', 'Details']] = data['Rest'].str.split('-', 1, expand=True)
+
+# Create a user column
+#data[['User', 'Contents']] = data['Details'].str.split(':', 1, expand=True)
+
+# Drop columns
+#data = data.drop(columns=['Content', 'Rest', 'Details'])
+
+# Drop the rows where all data is empty ('na')
+#data = data.dropna()
+
+# Rename the file values in the 'Content' column
+#data.loc[data['Contents'].str.contains('(file attached)'), 'Contents'] = 'media file'
+      
+# Save the Dataframe a CSV
+#df = data.to_csv(index=False)
+
+### ----- DATA PREP -----
+    
+# Show/Hide button
+#show_df = st.checkbox("Show Dataframe")
+
+# Display the Dataframe if checkbox is checked
+#if show_df:
+#    st.write(df)
+
+st.write(df)
+    
 # Display CSV content
-#st.write("Download CSV:")
-st.write(pd.read_csv(StringIO(df)))
+st.write("**Download CSV file**")
+#st.write(pd.read_csv(StringIO(df)))
 
 ### ----- DOWNLOAD CSV FILE -----
 
-#csv = df.to_csv(index=False).encode('utf-8')
-#st.download_button(
-#    "Press to Download",
-#    csv,
-#    "Clean_WhatsApp_file.csv",
-#    "text/csv",
-#    key='download-csv'
-#)
+csv = df.to_csv(index=False).encode('utf-8')
+st.download_button(
+    "Press to Download",
+    csv,
+    "Clean_WhatsApp_file.csv",
+    "text/csv",
+    key='download-csv'
+)
     
     
     
