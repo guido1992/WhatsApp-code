@@ -11,7 +11,6 @@ Created on Thu Dec 28 09:58:08 2023
 import streamlit as st
 import pandas as pd
 from io import StringIO
-import base64
 #from PIL import Image
 
 # Layout of application
@@ -79,22 +78,22 @@ data.columns = ['Content']
 ### ----- DATA PREP -----
     
 # Create a single Date column
-data[['Date', 'Rest']] = data['Content'].str.split(',', 1, expand=True)
+#data[['Date', 'Rest']] = data['Content'].str.split(',', 1, expand=True)
 
 # Create a single Time column
-data[['Time', 'Details']] = data['Rest'].str.split('-', 1, expand=True)
+#data[['Time', 'Details']] = data['Rest'].str.split('-', 1, expand=True)
 
 # Create a user column
-data[['User', 'Contents']] = data['Details'].str.split(':', 1, expand=True)
+#data[['User', 'Contents']] = data['Details'].str.split(':', 1, expand=True)
 
 # Drop the 'Rest' column
-data = data.drop(columns=['Content', 'Rest', 'Details'])
+#data = data.drop(columns=['Content', 'Rest', 'Details'])
 
 # Drop the rows where all data is empty ('na')
-data = data.dropna()
+#data = data.dropna()
 
 # Rename the file values in the 'Content' column
-data.loc[data['Contents'].str.contains('(file attached)'), 'Contents'] = 'media file'
+#data.loc[data['Contents'].str.contains('(file attached)'), 'Contents'] = 'media file'
       
 # Save the Dataframe a CSV
 df = data.to_csv(index=False)
