@@ -80,14 +80,14 @@ data.columns = ['Content']
 # Create a single Date column
 data[['Date', 'Rest']] = data['Content'].str.split(',', 1, expand=True)
 
+# Drop the 'Rest' column
+data = data.drop(columns=['Content'])
+
 # Create a single Time column
 #data[['Time', 'Details']] = data['Rest'].str.split('-', 1, expand=True)
 
 # Create a user column
 #data[['User', 'Contents']] = data['Details'].str.split(':', 1, expand=True)
-
-# Drop the 'Rest' column
-#data = data.drop(columns=['Content', 'Rest', 'Details'])
 
 # Drop the rows where all data is empty ('na')
 #data = data.dropna()
