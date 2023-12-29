@@ -78,7 +78,7 @@ data.columns = ['Content']
 ### ----- DATA PREP -----
     
 # Create a single Date column
-#data[['Date', 'Rest']] = data['Content'].str.split(',', 1, expand=True)
+data[['Date', 'Rest']] = data['Content'].str.split(',', 1, expand=True)
 
 # Create a single Time column
 #data[['Time', 'Details']] = data['Rest'].str.split('-', 1, expand=True)
@@ -122,15 +122,14 @@ st.write(pd.read_csv(StringIO(df)))
 
 ### ----- DOWNLOAD CSV FILE -----
 
-csv = df.to_csv(index=False)
 #csv = df.to_csv(index=False).encode('utf-8')
-st.download_button(
-    "Press to Download",
-    csv,
-    "Clean_WhatsApp_file.csv",
-    "text/csv",
-    key='download-csv'
-)
+#st.download_button(
+#    "Press to Download",
+#    csv,
+#    "Clean_WhatsApp_file.csv",
+#    "text/csv",
+#    key='download-csv'
+#)
     
     
     
