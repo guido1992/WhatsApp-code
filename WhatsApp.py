@@ -48,55 +48,75 @@ try:
                  
              Convert this .txt file into a csv.
              """)
+             
+    # File uploader widget
+    upload_file = st.file_uploader("**Upload your csv file**", type=["csv"])
 
-    # Upload file to read data
-    st.subheader("Dataset")
-    data_file = st.file_uploader("Upload your text file below...", type=["txt"])
-        
-    #uploaded_file = st.file_uploader("Upload your file here...", type=['txt'])
-
-    if data_file is not None:
-        file_details = {"filename":data_file.name, "filetype":data_file.type,
-                        "filesize":data_file.size}
-            
-    df = pd.read_csv(data_file, header=None, error_bad_lines=False, sep=',')
+    df = pd.read_csv(upload_file, header=None, error_bad_lines=False, sep=',')
 
     ### ----- DATA PREP -----
+    
+    # Remove the first row
+    df = df.iloc[1:]
+    
+    # Rename columns
+    #df.rename(columns = {'0':'Date1', '1':'Test', 
+    #                     '2':'Text'}, inplace = True) 
+    
+    df.set_axis(['Date1', 'Test', 'Text'], axis='columns', inplace=True)
         
     # Create a new field and name the field 'Date'
-    #df[['Time', 2]] = df[1].str.split('-', 1, expand=True)
-    df['Date'] = df[0]
+    df[['Date', 'Time']] = df['Date1'].str.split(',', expand=True)
+    
+    # Drop columns
+    df = df.drop(columns=['Date1', 'Time'])
+    
+    # Create a new field and name the field 'Date'
+    df[['Time', 'User']] = df['Test'].str.split('-', expand=True)
+    
+    # Drop columns
+    df = df.drop(columns=['Test', 'Time'])
+    
+    # Drop the rows where all data is empty ('na')
+    df = df.dropna()
+
+    # Rename the file values in the 'Content' column
+    df.loc[df['Text'].str.contains('(file attached)'), 'Text'] = 'media file'
+    
+    
+    #df[['Date']] = df[1].str.split('-', 1, expand=True)
+    #df['Date'] = df[0]
 
     # Drop the previous Date field
-    df = df.drop(columns=0)
+    #df = df.drop(columns=0)
 
     # Create a new column called 'Time' and number 2 by splitting column 1 on the '-' object.
-    df[['Time', 2]] = df[1].str.split('-', 1, expand=True)
+    #df[['Time', 2]] = df[1].str.split('-', 1, expand=True)
 
     # Drop the previous 1 field
-    df = df.drop(columns=1)
+    #df = df.drop(columns=1)
 
     # Create a new column called 'Name' and 'Content' by splitting column 2 on the ':' object.
-    df[['Name', 'Content']] = df[2].str.split(':', 1, expand=True)
+    #df[['Name', 'Content']] = df[2].str.split(':', 1, expand=True)
 
     # Merge columns 3 and Content
     #df['Message'] = df['3'] + ' ' + df['Content']
 
     # Drop the previous 2 field
-    df = df.drop(columns=2)
+    #df = df.drop(columns=2)
 
     # Drop the rows where all data is empty ('na')
-    df = df.dropna()
+    #df = df.dropna()
 
     # Rename the file values in the 'Content' column
-    df.loc[df['Content'].str.contains('(file attached)'), 'Content'] = 'media file'
+    #df.loc[df['Content'].str.contains('(file attached)'), 'Content'] = 'media file'
 
     # Show/Hide button
-    show_df = st.checkbox("Show Dataframe")
+    #show_df = st.checkbox("Show Dataframe")
 
     # Display the Dataframe if checkbox is checked
-    if show_df:
-            st.write(df)
+    #if show_df:
+    #        st.write(df)
 
     # Dataframe header
     st.subheader('Dataframe')
@@ -106,6 +126,8 @@ try:
              If media was included in the export, the value shown as **media file** was 
              standardised from all random names of the files exported.
              """)
+             
+    st.write(df)
 
 
 
@@ -155,7 +177,7 @@ try:
 
 ### ----- DATA PREP -----
     
-    st.write(df)
+    #st.write(df)
     
     # Display CSV content
     st.write("**Download CSV file**")
