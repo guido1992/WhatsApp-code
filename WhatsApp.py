@@ -52,7 +52,8 @@ try:
     # File uploader widget
     upload_file = st.file_uploader("**Upload your csv file**", type=["csv"])
 
-    df = pd.read_csv(upload_file, header=None, error_bad_lines=False, sep=',')
+    df = pd.read_csv(upload_file, header=None, sep=',')
+    #df = pd.read_csv(upload_file, header=None, error_bad_lines=False, sep=',')
 
     ### ----- DATA PREP -----
     
