@@ -92,11 +92,11 @@ try:
     df.loc[df['Content'].str.contains('(file attached)'), 'Content'] = 'media file'
 
     # Show/Hide button
-    #show_df = st.checkbox("Show Dataframe")
+    show_df = st.checkbox("Show Dataframe")
 
     # Display the Dataframe if checkbox is checked
-    #if show_df:
-        #    st.write(df)
+    if show_df:
+            st.write(df)
 
     # Dataframe header
     st.subheader('Dataframe')
@@ -155,13 +155,6 @@ try:
 
 ### ----- DATA PREP -----
     
-# Show/Hide button
-#show_df = st.checkbox("Show Dataframe")
-
-# Display the Dataframe if checkbox is checked
-#if show_df:
-#    st.write(df)
-
     st.write(df)
     
     # Display CSV content
